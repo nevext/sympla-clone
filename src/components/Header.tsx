@@ -57,7 +57,7 @@ export function Header() {
             </Link>
 
             <Link
-              href="/eventos"
+              href="/meus-eventos"
               className="inline-flex items-center gap-1.5 hover:text-brand-600 transition-colors"
             >
               <CalendarDays className="h-4 w-4 text-gray-500" />

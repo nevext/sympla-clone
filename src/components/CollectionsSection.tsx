@@ -98,7 +98,7 @@ export function CollectionsSection() {
             Explore nossas coleções
           </h2>
           <Link
-            href="/eventos"
+            href="/categorias"
             className="text-xs sm:text-sm font-semibold text-brand-500 hover:text-brand-600 transition-colors"
           >
             Ver tudo

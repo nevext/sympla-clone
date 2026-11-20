@@ -1,0 +1,9 @@
+
+> sympla-clone@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.29
+   - Local:        http://localhost:3001
+   - Network:      http://100.117.117.73:3001
+
+ ✓ Starting...

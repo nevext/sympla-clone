@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useMemo } from "react";
-import Link from "next/link";
-import { ArrowRight, Flame, Globe2 } from "lucide-react";
+import { Flame, Globe2, GraduationCap, Mic, Music, Sparkles } from "lucide-react";
 import { useSympla } from "@/context/SymplaContext";
 import { SearchLocationBar } from "@/components/SearchLocationBar";
 import { HeroCarousel } from "@/components/HeroCarousel";
 import { CollectionsSection } from "@/components/CollectionsSection";
-import { EventCard } from "@/components/EventCard";
+import { EventShelf } from "@/components/EventShelf";
+import { AppDownloadBanner } from "@/components/AppDownloadBanner";
 import { ProducerBanner } from "@/components/ProducerBanner";
 import { FaqSection } from "@/components/FaqSection";
 
@@ -29,6 +29,30 @@ export default function HomePage() {
     return highlighted.length > 0 ? highlighted : cityFiltered.slice(0, 4);
   }, [cityFiltered]);
 
+  const musicAndParties = useMemo(
+    () => events.filter((e) => e.category === "festas-e-shows"),
+    [events]
+  );
+
+  const theaters = useMemo(
+    () => events.filter((e) => e.category === "teatros-e-espetaculos"),
+    [events]
+  );
+
+  const standUp = useMemo(
+    () => events.filter((e) => e.category === "stand-up-comedy"),
+    [events]
+  );
+
+  const techAndCourses = useMemo(
+    () =>
+      events.filter(
+        (e) =>
+          e.category === "cursos-e-workshops" || e.category === "congressos-e-palestras"
+      ),
+    [events]
+  );
+
   const onlineAndFree = useMemo(
     () => events.filter((e) => e.modality === "online" || e.priceFrom === 0),
     [events]
@@ -40,73 +64,84 @@ export default function HomePage() {
       <HeroCarousel events={events} />
       <CollectionsSection />
 
-      {/* Eventos mais comprados nas últimas 24h */}
-      <section className="py-10 bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning-50 text-warning-600">
-                <Flame className="h-5 w-5" />
-              </span>
-              <div>
-                <h2 className="font-display text-lg sm:text-xl font-bold text-gray-900">
-                  Eventos mais comprados nas últimas 24h
-                </h2>
-                {selectedCity !== "Qualquer lugar" ? (
-                  <p className="text-xs text-gray-500">
-                    Exibindo destaques para{" "}
-                    <strong className="text-brand-700">{selectedCity}</strong>
-                  </p>
-                ) : null}
-              </div>
-            </div>
+      <EventShelf
+        title="Eventos mais comprados nas últimas 24h"
+        subtitle={
+          selectedCity !== "Qualquer lugar"
+            ? `Exibindo destaques para ${selectedCity}`
+            : undefined
+        }
+        href="/eventos/mais-vistos"
+        events={mostBought}
+        bgClass="bg-white"
+        icon={
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning-50 text-warning-600">
+            <Flame className="h-5 w-5" />
+          </span>
+        }
+      />
 
-            <Link
-              href="/eventos"
-              className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-brand-500 hover:text-brand-600"
-            >
-              Ver tudo
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+      <EventShelf
+        title="Festas e Shows"
+        href="/eventos/show-musica-festa"
+        events={musicAndParties}
+        bgClass="bg-gray-50/70"
+        icon={
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+            <Music className="h-5 w-5" />
+          </span>
+        }
+      />
 
-          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {mostBought.slice(0, 8).map((ev) => (
-              <EventCard key={ev.id} event={ev} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <EventShelf
+        title="Teatros e Espetáculos"
+        href="/eventos/teatro-espetaculo"
+        events={theaters}
+        bgClass="bg-white"
+        icon={
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+            <Sparkles className="h-5 w-5" />
+          </span>
+        }
+      />
 
-      {/* Eventos Online e Gratuitos */}
-      <section className="py-10 bg-gray-50 border-t border-gray-100">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-                <Globe2 className="h-5 w-5" />
-              </span>
-              <h2 className="font-display text-lg sm:text-xl font-bold text-gray-900">
-                Eventos Online e Gratuitos
-              </h2>
-            </div>
-            <Link
-              href="/eventos?preco=gratis"
-              className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-brand-500 hover:text-brand-600"
-            >
-              Ver tudo
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+      <EventShelf
+        title="Stand Up Comedy"
+        href="/eventos/stand-up-comedy"
+        events={standUp}
+        bgClass="bg-gray-50/70"
+        icon={
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning-50 text-warning-600">
+            <Mic className="h-5 w-5" />
+          </span>
+        }
+      />
 
-          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {onlineAndFree.slice(0, 4).map((ev) => (
-              <EventCard key={ev.id} event={ev} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <EventShelf
+        title="Congressos, Cursos e Workshops"
+        href="/eventos/curso-workshop"
+        events={techAndCourses}
+        bgClass="bg-white"
+        icon={
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+            <GraduationCap className="h-5 w-5" />
+          </span>
+        }
+      />
 
+      <EventShelf
+        title="Eventos Online e Gratuitos"
+        href="/eventos/gratis"
+        events={onlineAndFree}
+        bgClass="bg-gray-50/70"
+        icon={
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-success-50 text-success-600">
+            <Globe2 className="h-5 w-5" />
+          </span>
+        }
+      />
+
+      <AppDownloadBanner />
       <ProducerBanner />
 
       <div id="faq">
