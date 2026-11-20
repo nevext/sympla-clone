@@ -178,6 +178,7 @@ export default function EventDetailPage() {
 
         <button
           type="button"
+          data-testid="buy-tickets-btn"
           onClick={handleProceedCheckout}
           disabled={totals.count === 0}
           className={`${primaryBrandButton} w-full py-3.5 text-sm cursor-pointer`}
