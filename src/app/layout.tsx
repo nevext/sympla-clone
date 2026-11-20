@@ -5,6 +5,7 @@ import "@/styles/tokens.css";
 import { SymplaProvider } from "@/context/SymplaContext";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { HelpFloatingButton } from "@/components/HelpFloatingButton";
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -38,6 +39,7 @@ export default function RootLayout({
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <HelpFloatingButton />
         </SymplaProvider>
       </body>
     </html>

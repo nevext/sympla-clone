@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { useSympla } from "@/context/SymplaContext";
 import { formatCurrencyBRL } from "@/lib/format";
-import { EventCoverArt } from "@/components/EventCoverArt";
+import { ImagePlaceholder } from "@/components/ImagePlaceholder";
 import { primaryBrandButton, stickyTicketCard } from "@/styles/ui.css";
 
 export default function EventDetailPage() {
@@ -208,8 +208,8 @@ export default function EventDetailPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-6">
-              <div className="overflow-hidden rounded-2xl border border-white/15 shadow-2xl">
-                <EventCoverArt title={event.title} theme={event.bannerTheme} />
+              <div className="overflow-hidden rounded-2xl border border-white/15 shadow-2xl bg-white">
+                <ImagePlaceholder label={`Imagem do evento · ${event.categoryLabel}`} />
               </div>
             </div>
 

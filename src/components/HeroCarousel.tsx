@@ -4,132 +4,142 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Calendar, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { SymplaEvent } from "@/data/events";
-import { formatCurrencyBRL } from "@/lib/format";
-import { EventCoverArt } from "./EventCoverArt";
+import { ImagePlaceholder } from "./ImagePlaceholder";
 
 interface HeroCarouselProps {
   events: SymplaEvent[];
 }
 
 export function HeroCarousel({ events }: HeroCarouselProps) {
-  const slides = events.filter((e) => e.isFeaturedHero).slice(0, 4);
+  const slides = events.slice(0, 7);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     if (slides.length <= 1) return;
     const id = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % slides.length);
-    }, 6000);
+    }, 6500);
     return () => clearInterval(id);
   }, [slides.length]);
 
   if (slides.length === 0) return null;
-  const current = slides[activeIndex % slides.length];
 
-  const prev = () => setActiveIndex((i) => (i - 1 + slides.length) % slides.length);
-  const next = () => setActiveIndex((i) => (i + 1) % slides.length);
+  const total = slides.length;
+  const current = slides[activeIndex % total];
+
+  const prev = () => setActiveIndex((i) => (i - 1 + total) % total);
+  const next = () => setActiveIndex((i) => (i + 1) % total);
+
+  // Calcula deslocamento circular entre -3 e +3 para efeito coverflow empilhado
+  const getRelativeOffset = (index: number) => {
+    let diff = index - activeIndex;
+    if (diff > total / 2) diff -= total;
+    if (diff < -total / 2) diff += total;
+    return diff;
+  };
 
   return (
-    <section aria-label="Destaques da Sympla" className="bg-gray-50 pt-5 pb-6">
+    <section aria-label="Eventos em destaque na Sympla" className="bg-white pt-4 pb-8 overflow-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md">
-          <div className="grid grid-cols-1 lg:grid-cols-12">
-            {/* Arte do banner */}
-            <div className="lg:col-span-7">
-              <EventCoverArt
-                title={current.title}
-                theme={current.bannerTheme}
-                className="h-full min-h-[240px] lg:min-h-[340px]"
-              />
-            </div>
+        {/* Stage do Carrossel Coverflow */}
+        <div className="relative mx-auto flex h-[230px] sm:h-[310px] md:h-[360px] w-full max-w-5xl items-center justify-center">
+          {slides.map((slide, idx) => {
+            const offset = getRelativeOffset(idx);
+            const abs = Math.abs(offset);
+            if (abs > 3) return null;
 
-            {/* Painel informativo do slide */}
-            <div className="lg:col-span-5 flex flex-col justify-between p-6 sm:p-8 bg-white">
-              <div>
-                <span className="inline-flex items-center rounded-full bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700">
-                  {current.categoryLabel}
-                </span>
+            const isCenter = offset === 0;
+            const scale = isCenter ? 1 : abs === 1 ? 0.88 : abs === 2 ? 0.77 : 0.67;
+            const translateX = offset * 125; // sobreposição progressiva como no print
+            const zIndex = 30 - abs * 5;
+            const opacity = isCenter ? 1 : abs === 1 ? 0.92 : abs === 2 ? 0.82 : 0.7;
 
-                <h1 className="mt-3 font-display text-xl sm:text-2xl font-extrabold leading-snug text-gray-900">
-                  {current.title}
-                </h1>
-                <p className="mt-2 text-sm text-gray-600 line-clamp-2">{current.subtitle}</p>
-
-                <div className="mt-5 space-y-2 text-sm text-gray-700">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-brand-500 shrink-0" />
-                    <span className="font-semibold">{current.dateFull}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-brand-500 shrink-0" />
-                    <span className="truncate">
-                      {current.venue.name} — {current.venue.city}, {current.venue.state}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 flex items-center justify-between gap-4 border-t border-gray-100 pt-5">
-                <div>
-                  <span className="block text-[11px] font-semibold uppercase tracking-wide text-gray-400">
-                    Ingressos
-                  </span>
-                  <span className="text-lg font-extrabold text-gray-900">
-                    {current.priceFrom === 0
-                      ? "Gratuito"
-                      : `A partir de ${formatCurrencyBRL(current.priceFrom)}`}
-                  </span>
-                </div>
-
-                <Link
-                  href={`/evento/${current.slug}`}
-                  className="inline-flex items-center justify-center rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-bold text-white hover:bg-brand-600 transition-colors"
-                >
-                  Ver ingressos
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Controles laterais */}
-          {slides.length > 1 ? (
-            <>
-              <button
-                type="button"
-                onClick={prev}
-                aria-label="Slide anterior"
-                className="absolute left-3 top-1/2 -translate-y-1/2 hidden sm:flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-gray-800 shadow-md hover:bg-white cursor-pointer"
+            return (
+              <div
+                key={slide.id}
+                onClick={() => {
+                  if (!isCenter) setActiveIndex(idx);
+                }}
+                style={{
+                  transform: `translateX(${translateX}px) scale(${scale})`,
+                  zIndex,
+                  opacity,
+                }}
+                className={`absolute w-[84vw] max-w-[540px] aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-gray-200 bg-white transition-all duration-300 ease-out ${
+                  isCenter ? "cursor-default shadow-2xl" : "cursor-pointer brightness-90 hover:brightness-95"
+                }`}
               >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <button
-                type="button"
-                onClick={next}
-                aria-label="Próximo slide"
-                className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-gray-800 shadow-md hover:bg-white cursor-pointer"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </button>
-            </>
-          ) : null}
+                {isCenter ? (
+                  <Link href={`/evento/${slide.slug}`} className="block h-full w-full">
+                    <ImagePlaceholder
+                      aspect="hero"
+                      label={`Banner destaque · ${slide.categoryLabel}`}
+                    />
+                  </Link>
+                ) : (
+                  <ImagePlaceholder aspect="hero" label="" />
+                )}
+              </div>
+            );
+          })}
+
+          {/* Botões circulares brancos < e > nas bordas do card central */}
+          <button
+            type="button"
+            onClick={prev}
+            aria-label="Slide anterior"
+            className="absolute left-2 sm:left-[calc(50%-290px)] z-40 flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-700 shadow-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={next}
+            aria-label="Próximo slide"
+            className="absolute right-2 sm:right-[calc(50%-290px)] z-40 flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-700 shadow-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
         </div>
 
-        {/* Dots */}
-        {slides.length > 1 ? (
-          <div className="mt-4 flex items-center justify-center gap-2">
-            {slides.map((s, idx) => (
-              <button
-                key={s.id}
-                type="button"
-                aria-label={`Ir para destaque ${idx + 1}`}
-                onClick={() => setActiveIndex(idx)}
-                className={`h-2 rounded-full transition-all cursor-pointer ${
-                  idx === activeIndex ? "w-7 bg-brand-500" : "w-2 bg-gray-300 hover:bg-gray-400"
-                }`}
-              />
-            ))}
+        {/* Dots de paginação */}
+        <div className="mt-3 flex items-center justify-center gap-1.5">
+          {slides.map((s, idx) => (
+            <button
+              key={s.id}
+              type="button"
+              aria-label={`Ir para destaque ${idx + 1}`}
+              onClick={() => setActiveIndex(idx)}
+              className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                idx === activeIndex
+                  ? "w-2.5 bg-brand-500"
+                  : "w-1.5 bg-gray-300 hover:bg-gray-400"
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Título centralizado e metadados abaixo dos dots (igual ao print) */}
+        <div className="mt-3 text-center">
+          <Link
+            href={`/evento/${current.slug}`}
+            className="font-display text-base sm:text-lg font-extrabold uppercase tracking-wide text-gray-900 hover:text-brand-600 transition-colors"
+          >
+            {current.title}
+          </Link>
+          <div className="mt-1 flex flex-wrap items-center justify-center gap-4 text-xs text-gray-600">
+            <span className="inline-flex items-center gap-1">
+              <MapPin className="h-3.5 w-3.5 text-gray-500" />
+              {current.modality === "online"
+                ? "Online"
+                : `${current.venue.city} - ${current.venue.state}`}
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <Calendar className="h-3.5 w-3.5 text-gray-500" />
+              {current.dateShort}
+            </span>
           </div>
-        ) : null}
+        </div>
       </div>
     </section>
   );

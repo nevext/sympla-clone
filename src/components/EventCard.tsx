@@ -3,7 +3,7 @@ import Link from "next/link";
 import { MapPin, Video } from "lucide-react";
 import { SymplaEvent } from "@/data/events";
 import { formatCurrencyBRL } from "@/lib/format";
-import { EventCoverArt } from "./EventCoverArt";
+import { ImagePlaceholder } from "./ImagePlaceholder";
 import { eventCardRoot } from "@/styles/ui.css";
 
 interface EventCardProps {
@@ -14,9 +14,9 @@ export function EventCard({ event }: EventCardProps) {
   return (
     <Link href={`/evento/${event.slug}`} className={`${eventCardRoot} group`}>
       <div className="relative">
-        <EventCoverArt title={event.title} theme={event.bannerTheme} compact />
+        <ImagePlaceholder label={event.categoryLabel} />
         {event.ratingLabel ? (
-          <span className="absolute bottom-2.5 left-2.5 rounded-md bg-gray-950/75 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur-xs">
+          <span className="absolute bottom-2.5 left-2.5 rounded-md bg-gray-900/75 px-2 py-0.5 text-[11px] font-semibold text-white">
             {event.ratingLabel}
           </span>
         ) : null}

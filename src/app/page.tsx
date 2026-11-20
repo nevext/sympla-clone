@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import Link from "next/link";
 import { ArrowRight, Flame, Globe2 } from "lucide-react";
 import { useSympla } from "@/context/SymplaContext";
-import { CategoryStrip } from "@/components/CategoryStrip";
+import { SearchLocationBar } from "@/components/SearchLocationBar";
 import { HeroCarousel } from "@/components/HeroCarousel";
 import { CollectionsSection } from "@/components/CollectionsSection";
 import { EventCard } from "@/components/EventCard";
@@ -36,12 +36,12 @@ export default function HomePage() {
 
   return (
     <div>
-      <CategoryStrip />
+      <SearchLocationBar />
       <HeroCarousel events={events} />
       <CollectionsSection />
 
       {/* Eventos mais comprados nas últimas 24h */}
-      <section className="py-10 bg-gray-50 border-y border-gray-200">
+      <section className="py-10 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">
@@ -49,7 +49,7 @@ export default function HomePage() {
                 <Flame className="h-5 w-5" />
               </span>
               <div>
-                <h2 className="font-display text-xl sm:text-2xl font-extrabold text-gray-900">
+                <h2 className="font-display text-lg sm:text-xl font-bold text-gray-900">
                   Eventos mais comprados nas últimas 24h
                 </h2>
                 {selectedCity !== "Qualquer lugar" ? (
@@ -63,14 +63,14 @@ export default function HomePage() {
 
             <Link
               href="/eventos"
-              className="inline-flex items-center gap-1 text-sm font-bold text-brand-600 hover:text-brand-700"
+              className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-brand-500 hover:text-brand-600"
             >
               Ver tudo
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {mostBought.slice(0, 8).map((ev) => (
               <EventCard key={ev.id} event={ev} />
             ))}
@@ -79,27 +79,27 @@ export default function HomePage() {
       </section>
 
       {/* Eventos Online e Gratuitos */}
-      <section className="py-10 bg-white">
+      <section className="py-10 bg-gray-50 border-t border-gray-100">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">
               <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
                 <Globe2 className="h-5 w-5" />
               </span>
-              <h2 className="font-display text-xl sm:text-2xl font-extrabold text-gray-900">
+              <h2 className="font-display text-lg sm:text-xl font-bold text-gray-900">
                 Eventos Online e Gratuitos
               </h2>
             </div>
             <Link
               href="/eventos?preco=gratis"
-              className="inline-flex items-center gap-1 text-sm font-bold text-brand-600 hover:text-brand-700"
+              className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-brand-500 hover:text-brand-600"
             >
               Ver tudo
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {onlineAndFree.slice(0, 4).map((ev) => (
               <EventCard key={ev.id} event={ev} />
             ))}
